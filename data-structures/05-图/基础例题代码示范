@@ -1,0 +1,507 @@
+好的，接下来是第二部分：**基础代码示范例题**。每道题都配有场景故事、可运行代码，以及逐行解释。建议你打开 Python 环境，边看边敲，亲自感受图是怎么“活”起来的。
+
+---
+
+# 数据结构·图：基础代码示范练习（初中生友好版）
+
+> 💡 **学习提示**：本节所有代码都围绕一张“校园导航图”展开。你可以想象自己是校长，要在教学楼、图书馆、食堂和体育馆之间修路，并用代码探索路线。
+
+---
+
+## 示例图说明
+
+我们先用一张最简单的图来练习：
+
+```
+   教学楼(A)
+    /    \
+   /      \
+图书馆(B)  食堂(C)
+   \      /
+    \    /
+    体育馆(D)
+```
+
+- **顶点**：A(教学楼), B(图书馆), C(食堂), D(体育馆)
+- **边（无向）**：A-B, A-C, B-D, C-D
+
+> 🧠 **先花 1 分钟在纸上画出这张图**，后面所有代码都是对它的操作。
+
+---
+
+### 例题 1：用邻接矩阵存储校园地图
+
+**场景故事：**
+校长让你用 Excel 表格记录各个建筑之间是否有路直接相连。如果有一条路，就在对应格子里写 `1`，否则写 `0`。
+
+**任务要求：**
+用 NumPy 创建一个 4×4 的二维数组 `adj_matrix` 来表示这张图。顶点顺序为：A(0), B(1), C(2), D(3)。
+
+```python
+import numpy as np
+
+# ========== 你的代码在这里 ==========
+# 提示：创建一个 4x4 的零矩阵，然后根据边的情况把对应位置改成 1
+adj_matrix = None
+# ===================================
+
+print("校园邻接矩阵：")
+print(adj_matrix)
+print("A 和 C 是否直接相连？", adj_matrix[0, 2] == 1)  # 应为 True
+```
+
+<details>
+<summary><b>✅ 点击查看答案与解析</b></summary>
+
+```python
+import numpy as np
+
+# 答案代码
+adj_matrix = np.zeros((4, 4), dtype=int)  # 先画一张全是 0 的 4x4 表格
+
+# 根据边来填 1（因为是无向图，A-B 相连意味着 A行B列 和 B行A列 都是 1）
+adj_matrix[0, 1] = adj_matrix[1, 0] = 1  # A - B
+adj_matrix[0, 2] = adj_matrix[2, 0] = 1  # A - C
+adj_matrix[1, 3] = adj_matrix[3, 1] = 1  # B - D
+adj_matrix[2, 3] = adj_matrix[3, 2] = 1  # C - D
+
+print("校园邻接矩阵：")
+print(adj_matrix)
+print("A 和 C 是否直接相连？", adj_matrix[0, 2] == 1)
+```
+
+**输出预览：**
+```
+校园邻接矩阵：
+[[0 1 1 0]
+ [1 0 0 1]
+ [1 0 0 1]
+ [0 1 1 0]]
+A 和 C 是否直接相连？ True
+```
+
+**解析（初中生版）：**
+- `np.zeros((4,4))` 就像拿了一张白纸，画了一个 4×4 的棋盘格，初始全是 0。
+- 矩阵的行和列都代表 A、B、C、D（索引 0~3）。
+- 因为是**无向图**，A 和 B 有路，所以 `[0,1]` 和 `[1,0]` 两个格子都要填 1。
+- **优点**：查两个人是不是朋友，看一眼 `矩阵[i][j]` 就行，O(1) 极快！
+- **缺点**：如果校园有 1000 栋楼，表格就有 100 万个格子，其中大部分是 0，太浪费纸了。
+</details>
+
+---
+
+### 例题 2：用邻接表存储校园地图（更省纸的方法）
+
+**场景故事：**
+校长觉得 Excel 表太大了，说：“不如让每栋楼的门卫只记住从自己这里能直接走到哪几栋楼吧！”
+
+**任务要求：**
+用一个 Python 字典 `adj_list` 来表示邻接表。字典的**键**是顶点名称（如 `'A'`），**值**是一个列表，存放它直接相连的邻居。
+
+```python
+# ========== 你的代码在这里 ==========
+adj_list = None  # 提示：创建一个字典
+# ===================================
+
+print("校园邻接表：")
+for node, neighbors in adj_list.items():
+    print(f"{node} 的门卫说：我可以直接去 {neighbors}")
+```
+
+<details>
+<summary><b>✅ 点击查看答案与解析</b></summary>
+
+```python
+# 答案代码
+adj_list = {
+    'A': ['B', 'C'],       # 教学楼能直接去图书馆和食堂
+    'B': ['A', 'D'],       # 图书馆能去教学楼和体育馆
+    'C': ['A', 'D'],       # 食堂能去教学楼和体育馆
+    'D': ['B', 'C']        # 体育馆能去图书馆和食堂
+}
+
+print("校园邻接表：")
+for node, neighbors in adj_list.items():
+    print(f"{node} 的门卫说：我可以直接去 {neighbors}")
+```
+
+**输出预览：**
+```
+校园邻接表：
+A 的门卫说：我可以直接去 ['B', 'C']
+B 的门卫说：我可以直接去 ['A', 'D']
+C 的门卫说：我可以直接去 ['A', 'D']
+D 的门卫说：我可以直接去 ['B', 'C']
+```
+
+**解析（初中生版）：**
+- **邻接表**就像每人手里一张小纸条，只写自己的朋友，不关心别人的朋友。
+- 省内存：1000 个顶点，如果每个顶点平均只有 5 个朋友，只需要存 5000 条信息（而不是 1000×1000 的表格）。
+- **怎么查 A 和 D 是不是朋友？** 得在 A 的纸条里翻一遍，看看有没有 D。稍微慢一点点，但绝对不浪费纸。
+</details>
+
+---
+
+### 例题 3：深度优先搜索（DFS）—— 走迷宫，不撞南墙不回头
+
+**场景故事：**
+新生小明在**教学楼 A**，他想逛遍整个校园，并且走一条“有去无回直到没路”的路线（其实就是他迷路了，一直往前走，走到死胡同才回头）。
+
+**任务要求：**
+从顶点 `'A'` 开始，用 **DFS（递归版）** 打印出访问顶点的顺序。要求不能重复访问同一个地方。
+
+```python
+# 接上一题，adj_list 已经定义好了
+adj_list = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['B', 'C']
+}
+
+visited = set()  # 用来记录已经去过的地方，避免鬼打墙
+
+def dfs(node):
+    """从 node 出发，深度优先遍历"""
+    # ========== 你的代码在这里 ==========
+    pass  # 提示：1. 标记当前节点已访问并打印  2. 对每个邻居，如果没访问过就递归进去
+    # ===================================
+
+print("DFS 访问顺序：")
+dfs('A')
+```
+
+<details>
+<summary><b>✅ 点击查看答案与解析</b></summary>
+
+```python
+adj_list = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['B', 'C']
+}
+
+visited = set()
+
+def dfs(node):
+    # 1. 先把自己标记为“已访问”，并大声喊出自己的名字
+    visited.add(node)
+    print(node, end=' ')  # end=' ' 表示不换行，用空格隔开
+    
+    # 2. 看看自己的小纸条（邻居列表），挨个去拜访
+    for neighbor in adj_list[node]:
+        if neighbor not in visited:  # 如果这个邻居没去过
+            dfs(neighbor)            # 立刻冲过去！（递归）
+
+print("DFS 访问顺序：")
+dfs('A')
+```
+
+**可能的输出：**
+```
+DFS 访问顺序：
+A B D C 
+```
+（也可能是 `A C D B`，取决于邻居列表的顺序）
+
+**解析（初中生版）：**
+- `visited` 是一个**集合 (set)**，就像一本签到本，去过的人把名字写上去，防止在同一个地方打转。
+- **递归过程**（假设邻居顺序是 B 先于 C）：
+  1. 进 A，签到，看到邻居 B 和 C。
+  2. 先冲进 B，签到，B 的邻居是 A（已签到跳过）和 D。
+  3. 冲进 D，签到，D 的邻居是 B（跳过）和 C。
+  4. 冲进 C，签到，C 的邻居是 A（跳过）和 D（跳过）。
+  5. C 没地方去了，**退回** D，D 也没地方去了，退回 B，退回 A。A 还有邻居 C？但 C 已经签到过了，跳过。
+  6. 遍历结束。
+- **核心精神**：**一条路走到黑，发现走不通了才回头**。
+</details>
+
+---
+
+### 例题 4：广度优先搜索（BFS）—— 像波浪一样层层扩散
+
+**场景故事：**
+校长想知道，从**教学楼 A** 出发，按照“先近后远”的顺序，通知各栋楼开门。他先通知 A 旁边的楼，再通知旁边的旁边……
+
+**任务要求：**
+从顶点 `'A'` 开始，用 **BFS（队列版）** 打印出访问顶点的顺序。
+
+```python
+from collections import deque  # 双端队列，用来模拟排队
+
+adj_list = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['B', 'C']
+}
+
+def bfs(start):
+    visited = set()           # 签到本
+    queue = deque()           # 排队用的队伍
+    
+    # ========== 你的代码在这里 ==========
+    # 提示：1. 把起点放入队列并标记已访问
+    #      2. 当队列不为空时，弹出队首，打印，并把它的未访问邻居放入队尾
+    pass
+    # ===================================
+
+print("BFS 访问顺序：")
+bfs('A')
+```
+
+<details>
+<summary><b>✅ 点击查看答案与解析</b></summary>
+
+```python
+from collections import deque
+
+adj_list = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['B', 'C']
+}
+
+def bfs(start):
+    visited = set()
+    queue = deque()
+    
+    # 1. 起点先进队，并签到
+    visited.add(start)
+    queue.append(start)
+    
+    # 2. 队伍不散，就一个个处理
+    while queue:
+        current = queue.popleft()      # 队首的人出来
+        print(current, end=' ')
+        
+        # 把他的朋友（邻居）都叫来排队（如果还没签过到）
+        for neighbor in adj_list[current]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)  # 排到队尾去
+
+print("BFS 访问顺序：")
+bfs('A')
+```
+
+**输出：**
+```
+BFS 访问顺序：
+A B C D 
+```
+
+**解析（初中生版）：**
+- **队列 (Queue)** 就像食堂打饭的队伍，**先来的先打饭**（先进先出 FIFO）。
+- **过程模拟**：
+  1. 初始队列：`[A]`（已签到：A）
+  2. A 出队，打印 `A`。A 的邻居 B、C 未签到 → 签到并入队。队列：`[B, C]`
+  3. B 出队，打印 `B`。B 的邻居 A（已签）、D（未签）→ D 签到入队。队列：`[C, D]`
+  4. C 出队，打印 `C`。C 的邻居 A（已签）、D（已签）→ 无事发生。队列：`[D]`
+  5. D 出队，打印 `D`。D 的邻居 B、C 都已签。队列空，结束。
+- **特点**：按距离起点的“层数”依次访问。A 是第 0 层，B、C 是第 1 层，D 是第 2 层。
+- **BFS 是找最短路径的基础**，导航软件的最短路线算法就源于此思想！
+</details>
+
+---
+
+### 例题 5：使用 BFS 寻找最短路径（无权图）
+
+**场景故事：**
+小明在 **A（教学楼）**，他想去 **D（体育馆）** 上体育课。由于校园里每条路都一样长，他想知道**最少经过几栋楼**能到体育馆。
+
+**任务要求：**
+修改 BFS，不仅能遍历，还能**记录下从起点到每个顶点的最短距离**。
+
+```python
+from collections import deque
+
+adj_list = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['B', 'C']
+}
+
+def bfs_shortest_distance(start, target):
+    visited = set()
+    queue = deque()
+    
+    # 距离字典：记录每个节点离 start 有多远
+    distance = {start: 0}
+    
+    visited.add(start)
+    queue.append(start)
+    
+    while queue:
+        current = queue.popleft()
+        
+        # 如果找到了目标，直接返回距离
+        if current == target:
+            return distance[current]
+        
+        for neighbor in adj_list[current]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                # ========== 你的代码在这里 ==========
+                # 提示：邻居的距离 = 当前节点的距离 + 1
+                pass
+                # ===================================
+                queue.append(neighbor)
+    
+    return -1  # 如果找不到（图不连通），返回 -1
+
+print("从 A 到 D 的最短距离（经过的边数）:", bfs_shortest_distance('A', 'D'))
+```
+
+<details>
+<summary><b>✅ 点击查看答案与解析</b></summary>
+
+```python
+from collections import deque
+
+adj_list = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['B', 'C']
+}
+
+def bfs_shortest_distance(start, target):
+    visited = set()
+    queue = deque()
+    distance = {start: 0}
+    
+    visited.add(start)
+    queue.append(start)
+    
+    while queue:
+        current = queue.popleft()
+        if current == target:
+            return distance[current]
+        
+        for neighbor in adj_list[current]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                # 答案代码：邻居的距离就是当前距离 + 1
+                distance[neighbor] = distance[current] + 1
+                queue.append(neighbor)
+    return -1
+
+print("从 A 到 D 的最短距离（经过的边数）:", bfs_shortest_distance('A', 'D'))
+```
+
+**输出：**
+```
+从 A 到 D 的最短距离（经过的边数）: 2
+```
+
+**解析（初中生版）：**
+- BFS 的天然特性：**第一次访问到某个节点时，一定走的是最短路径**。
+- 为什么？因为 BFS 是按层扩散的，第 1 层找不到，才去第 2 层找。所以当 D 第一次被访问时，它所在的层数就是最短距离。
+- `distance` 字典就像每个节点的“深度尺”：起点是 0 米，直接邻居是 1 米，邻居的邻居是 2 米……
+- 本题中 A→B→D 或 A→C→D 都是 2 步，BFS 会输出 2。
+</details>
+
+---
+
+### 例题 6：判断图中两个顶点是否连通
+
+**场景故事：**
+校长想知道，如果图书馆 B 旁边的桥断了，**A 和 D 还能互相到达吗？**
+
+**任务要求：**
+编写一个函数 `is_connected(graph, start, end)`，利用 DFS 或 BFS 检查两点是否连通。
+
+```python
+def is_connected(graph, start, end):
+    # ========== 你的代码在这里 ==========
+    # 提示：从 start 开始 DFS/BFS，如果能访问到 end 就返回 True
+    pass
+    # ===================================
+
+adj_list = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['B', 'C']
+}
+
+print("A 和 D 连通吗？", is_connected(adj_list, 'A', 'D'))  # True
+
+# 模拟桥断了：删除 B-D 这条边
+adj_list_broken = {
+    'A': ['B', 'C'],
+    'B': ['A'],         # 去 D 的桥没了
+    'C': ['A', 'D'],
+    'D': ['C']          # 去 B 的桥没了
+}
+print("桥断了后，A 和 D 连通吗？", is_connected(adj_list_broken, 'A', 'D'))  # True（因为还可以走 C）
+```
+
+<details>
+<summary><b>✅ 点击查看答案与解析</b></summary>
+
+```python
+def is_connected(graph, start, end):
+    visited = set()
+    
+    def dfs(node):
+        if node == end:          # 找到了！
+            return True
+        visited.add(node)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                if dfs(neighbor):   # 如果从邻居那里找到了目标，就一路返回 True
+                    return True
+        return False
+    
+    return dfs(start)
+
+# 测试
+adj_list = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['B', 'C']
+}
+print("A 和 D 连通吗？", is_connected(adj_list, 'A', 'D'))
+
+adj_list_broken = {
+    'A': ['B', 'C'],
+    'B': ['A'],
+    'C': ['A', 'D'],
+    'D': ['C']
+}
+print("桥断了后，A 和 D 连通吗？", is_connected(adj_list_broken, 'A', 'D'))
+```
+
+**输出：**
+```
+A 和 D 连通吗？ True
+桥断了后，A 和 D 连通吗？ True
+```
+
+**解析（初中生版）：**
+- 连通性判断就是**从起点出发，看看能不能走到终点**。DFS/BFS 都是探路的方法。
+- 递归版的 DFS 有一个小技巧：一旦发现 `neighbor == end`，立刻返回 `True`，并且把 `True` 像接力棒一样一层层传回最外层。
+- 如果所有的路都探完了还没找到，就返回 `False`。
+</details>
+
+---
+
+### 🎯 基础篇小结
+
+通过上面 6 道题，你已经掌握了图的**存储、遍历、最短距离、连通性判断**。这些是图论大厦的地基。
+
+| 你学会的技能 | 代码关键词 | 生活应用 |
+| :--- | :--- | :--- |
+| 用矩阵存图 | `np.zeros()` + 填 1 | Excel 画关系表 |
+| 用邻接表存图 | 字典 + 列表 | 每人一张通讯录 |
+| 深度优先搜索 DFS | 递归 / 栈 | 迷宫探路、检测环路 |
+| 广度优先搜索 BFS | 队列 `deque` | 导航最短路径、社交推荐 |
+| 无权图最短距离 | BFS + distance 字典 | 最少换乘次数 |
+
+> 💪 **挑战一下**：试着把邻接表改成**带权图**（比如 A-B 的距离是 5 分钟），你会怎么存？下一节进阶篇，我们将挑战 **Dijkstra 最短路径（带权图）** 和 **拓扑排序（大学选课）**！

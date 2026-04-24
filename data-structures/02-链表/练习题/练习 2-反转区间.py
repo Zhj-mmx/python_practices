@@ -34,6 +34,19 @@ def reverse_between(head, left, right):
     """
     # TODO: 梦哥，你来写！
     # 提示：需要记录 prev, start, curr 三个关键位置
+    #啊，我来写吗？
+    curr = head
+    n = 1
+    while curr:
+        curr = curr.next
+        n += 1
+        if n == left:
+            start = curr
+            
+
+            
+ 
+            
     pass
 
 
