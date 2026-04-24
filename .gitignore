@@ -47,10 +47,10 @@ data/MNIST/
 *.hdf5
 
 # 图片文件（可选，如需要可注释掉）
-# *.png
-# *.jpg
-# *.jpeg
-# *.gif
+ *.png
+ *.jpg
+ *.jpeg
+ *.gif
 
 # 日志文件
 *.log
@@ -66,4 +66,5 @@ Thumbs.db
 secrets.json
 
 #ai生成的文件
-.ai_work/
+ai_work/
+data/
