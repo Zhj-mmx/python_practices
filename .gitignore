@@ -64,3 +64,6 @@ Thumbs.db
 *.key
 *.pem
 secrets.json
+
+#ai生成的文件
+.ai_work/
