@@ -51,9 +51,9 @@ temps = np.array([[ 25, -999,   30],
 
 fault_mask = (temps == -999)
 
-normal_sum = np.where(fault_mask, 0, temps).sum(axis=0)
+normal_sum = np.where(fault_mask, 0, temps).sum(axis=0) #?where
 
-normal_count = (~fault_mask).sum(axis=0)
+normal_count = (~fault_mask).sum(axis=0) #?
 
 mean_normal = normal_sum / normal_count
 
