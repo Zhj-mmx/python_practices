@@ -65,5 +65,5 @@ class BinarySearchTree:
                 return node.left
             temp = self._min_value_node(node.right)
             node.data = temp.data
-            node.right = self._delete_recursive(node.right, temp.data)
+            node.right = self._delete_recursive(node.right, temp.data)           
         return node
