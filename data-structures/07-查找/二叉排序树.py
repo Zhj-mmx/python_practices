@@ -1,4 +1,3 @@
-#算法7.5 二叉排序树的插入
 class Node:
     def __init__(self, data):
         self.data = data
@@ -8,6 +7,18 @@ class Node:
 class BinarySearchTree:
     def __init__(self):
         self.root = None
+
+#算法7.4 二叉排序树的查找
+    def search(self, key):
+        return self._search_recursive(self.root, key)
+
+    def _search_recursive(self, node, key):
+        if node is None or node.data == key:
+            return node
+        if key < node.data:
+            return self._search_recursive(node.left, key)
+        else:
+            return self._search_recursive(node.right, key)
 
 #算法7.5 二叉排序树的插入
 
